@@ -1,5 +1,4 @@
 require 'benchmark'
-
 class NumberToWord
   LastIndex = 9
   def initialize
@@ -30,25 +29,33 @@ class NumberToWord
     @number_to_word_mapping = number.chars.map{ |digit| @mapping[digit] }
   end
 
+  def valid? number
+    number.nil? || number.length != 10
+  end
+  
   def letter_combinations(number)
-    dump_dictionary_words
-    mapped_list = number_to_word_mapping number
-    
-    (2..LastIndex - 2).each do |i|
-      array_list = mapped_list[0..i]
-      prefix_list = array_list.shift.product(*array_list).map(&:join)
+    unless valid? number 
+      dump_dictionary_words
+      mapped_list = number_to_word_mapping number
+      
+      (2..LastIndex - 2).each do |i|
+        array_list = mapped_list[0..i]
+        prefix_list = array_list.shift.product(*array_list).map(&:join)
 
-      array_list = mapped_list[i + 1..LastIndex]
-      suffix_list = array_list.shift.product(*array_list).map(&:join)
+        array_list = mapped_list[i + 1..LastIndex]
+        suffix_list = array_list.shift.product(*array_list).map(&:join)
 
-      @results[i] = [(prefix_list & @dictionary[i+2]), (suffix_list & @dictionary[LastIndex - i +1])] # get common values from arrays
+        @results[i] = [(prefix_list & @dictionary[i+2]), (suffix_list & @dictionary[LastIndex - i +1])]
+      end
+   
+      @results.values.each do |words|
+        words.first.product(words.last).each { |combo_words| @compound_words << combo_words }
+      end
+      @compound_words << (mapped_list.shift.product(*mapped_list).map(&:join) & @dictionary[11]).join(", ")
+      @compound_words
+    else
+      puts "invalid number"
     end
- 
-    @results.values.each do |words|
-      words.first.product(words.last).each { |combo_words| @compound_words << combo_words }
-    end
-    @compound_words << (mapped_list.shift.product(*mapped_list).map(&:join) & @dictionary[11]).join(", ") # matche with all character
-    @compound_words
   end
 end 
 
