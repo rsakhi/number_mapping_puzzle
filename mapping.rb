@@ -4,6 +4,7 @@ class NumberToWord
   LastIndex = 9
   def initialize
     @results = {}
+    @compound_words = []
     @mapping = {
       "2" => ["a", "b", "c"],
       "3" => ["d", "e", "f"],
@@ -40,10 +41,16 @@ class NumberToWord
       array_list = mapped_list[i + 1..LastIndex]
       suffix_list = array_list.shift.product(*array_list).map(&:join)
 
+      @results[i] = [(prefix_list & @dictionary[i+2]), (suffix_list & @dictionary[LastIndex - i +1])] # get common values from arrays
     end
-   
+ 
+    @results.values.each do |words|
+      words.first.product(words.last).each { |combo_words| @compound_words << combo_words }
+    end
+    @compound_words << (mapped_list.shift.product(*mapped_list).map(&:join) & @dictionary[11]).join(", ") # matche with all character
+    @compound_words
   end
 end 
 
-final_words = NumberToWord.new().letter_combinations("2282668687")
-print final_words
+compound_words = NumberToWord.new().letter_combinations("2282668687")
+print compound_words
