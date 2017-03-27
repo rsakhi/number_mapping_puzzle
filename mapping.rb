@@ -12,7 +12,14 @@ class NumberToWord
       "8" => ["t", "u", "v"],
       "9" => ["w", "x", "y", "z"]
     }
-  end 
+  end
+  def dump_dictionary_words
+    @dictionary = {}
+    (2..30).each {|i| @dictionary[i] = [] }
+    file_path = "dictionary.txt"
+    File.foreach(file_path) do |word|
+      @dictionary[word.length] << word.chop.to_s.downcase if word.length >= 3
+    end
+  end
 end
-
 obj = NumberToWord.new()
